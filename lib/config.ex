@@ -10,9 +10,10 @@ defmodule Fcmex.Config do
     ]
   end
 
-  def server_key do
-    Application.get_env(:fcmex, :server_key) || retrieve_on_run_time("FCM_SERVER_KEY") ||
-      raise "FCM Server key is not found on your environment variables"
+  def get_project_id() do
+    Application.get_env(:fcmex, :project_id)
+    || retrieve_on_run_time("FCM_PROJECT_ID")
+    || raise "FCM project_id key is not found on your environment variables"
   end
 
   def retrieve_on_run_time(key) do
