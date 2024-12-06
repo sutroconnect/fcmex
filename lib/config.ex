@@ -3,7 +3,7 @@ defmodule Fcmex.Config do
     A configuration for FCM
   "
 
-  def new do
+  def get_headers do
     [
       {"Content-Type", "application/json"},
       {"Authorization", "Bearer #{Fcmex.TokenExtractor.get_token()}"}
