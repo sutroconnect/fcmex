@@ -1,12 +1,10 @@
 defmodule Fcmex.Request do
-  @moduledoc ~S"
-    Perform request to FCM
-  "
+  @moduledoc """
+  Handles making the messaging request to Firebase
+  """
 
   use Retry
   alias Fcmex.{Util, Config, Payload}
-
-  @fcm_endpoint "https://fcm.googleapis.com/fcm/send"
 
   def perform(to, opts) do
     with payload <- Payload.create(to, opts),
@@ -16,13 +14,14 @@ defmodule Fcmex.Request do
   end
 
   defp post(%Payload{} = payload, opts) do
-    endpoint = Keyword.get(opts, :endpoint, @fcm_endpoint)
+    endpoint = Keyword.get(opts, :endpoint, get_default_fcm_endpoint())
+    payload = payload |> build_payload() |> Config.json_library().encode!()
 
     retry with: exponential_backoff() |> randomize |> expiry(10_000) do
       HTTPoison.post(
         endpoint,
-        payload |> Config.json_library().encode!(),
-        Config.new(),
+        payload,
+        Config.get_headers(),
         Config.httpoison_options()
       )
     after
@@ -30,5 +29,16 @@ defmodule Fcmex.Request do
     else
       error -> error
     end
+  end
+
+  defp get_default_fcm_endpoint() do
+    project_id = Config.get_project_id()
+    url = "https://fcm.googleapis.com/v1/projects/#{project_id}/messages:send"
+  end
+
+  defp build_payload(payload) do
+    %{
+      "message" => payload
+    }
   end
 end
