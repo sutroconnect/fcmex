@@ -4,7 +4,7 @@ defmodule Fcmex.Payload do
   "
 
   defstruct [
-    :to,
+    :topic,
     :registration_ids,
     :notification,
     :data,
@@ -36,7 +36,7 @@ defmodule Fcmex.Payload do
     |> Enum.into(%{})
   end
 
-  def put_destination(opts, to) when is_binary(to), do: Keyword.merge(opts, to: to)
+  def put_destination(opts, topic) when is_binary(to), do: Keyword.merge(opts, topic: topic)
 
   def put_destination(opts, to) when is_list(to) and length(to) > 0,
     do: Keyword.merge(opts, registration_ids: to)
