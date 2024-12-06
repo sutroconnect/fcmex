@@ -6,7 +6,7 @@ defmodule Fcmex.Config do
   def new do
     [
       {"Content-Type", "application/json"},
-      {"Authorization", "key=#{server_key()}"}
+      {"Authorization", "Bearer #{Fcmex.TokenExtractor.get_token()}"}
     ]
   end
 
